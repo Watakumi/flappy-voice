@@ -1,4 +1,4 @@
-module flappy-voice
+module github.com/Watakumi/flappy-voice
 
 go 1.23.1
 
