@@ -263,7 +263,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	var texts string
 	switch g.mode {
 	case ModeTitle:
-		titleTexts = "FLAPPY GOPHER"
+		titleTexts = "FLAPPY VOICE(仮)"
 		texts = "\n\n\n\n\n\nPRESS SPACE KEY\n\nOR A/B BUTTON\n\nOR TOUCH SCREEN"
 	case ModeGameOver:
 		texts = "\nGAME OVER!"
@@ -463,7 +463,7 @@ func (g *GameWithCRTEffect) DrawFinalScreen(screen ebiten.FinalScreen, offscreen
 func main() {
 	flag.Parse()
 	ebiten.SetWindowSize(screenWidth, screenHeight)
-	ebiten.SetWindowTitle("Flappy Gopher (Ebitengine Demo)")
+	ebiten.SetWindowTitle("Flappy Voice(仮)")
 	if err := ebiten.RunGame(NewGame(*flagCRT)); err != nil {
 		panic(err)
 	}
