@@ -228,6 +228,12 @@ func (g *Game) isSelectedKeyPressed() Difficulty {
 	if inpututil.IsKeyJustPressed(ebiten.KeyDigit0) {
 		return Easy
 	}
+	if inpututil.IsKeyJustPressed(ebiten.KeyDigit1) {
+		return Normal
+	}
+	if inpututil.IsKeyJustPressed(ebiten.KeyDigit2) {
+		return Hard
+	}
 	return NotSelected
 }
 
@@ -257,16 +263,19 @@ func (g *Game) Update() error {
 		g.y16 += g.vy16
 
 		// Gravity
-		if g.selectedDifficulty == Easy {
-			g.vy16 += 1
-			if g.vy16 > 96 {
-				g.vy16 = 96
-			}
-		} else {
+    switch g.selectedDifficulty {
+		case Easy:
+			g.vy16 += 8
+		case Normal:
 			g.vy16 += 4
-			if g.vy16 > 96 {
-				g.vy16 = 96
-			}
+		case Hard:
+			g.vy16 += 20
+    default:
+			g.vy16 += 4
+		}
+
+		if g.vy16 > 96 {
+			g.vy16 = 96
 		}
 
 		if g.hit() {
@@ -301,7 +310,17 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	switch g.mode {
 	case ModeTitle:
 		titleTexts = "FLAPPY VOICE(仮)"
-		texts = "\n\n\n\n\n\nPRESS SPACE KEY\n\nOR TOUCH SCREEN"
+		texts = `
+
+
+
+SELECT MODE
+
+0 = EASY
+1 = NORMAL
+2 = HARD
+`
+
 	case ModeGameOver:
 		texts = "\nGAME OVER!"
 	}
