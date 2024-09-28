@@ -19,7 +19,7 @@ import (
 )
 
 var (
-	//go:embed jab.wav
+	//go:embed end_gameover.wav
 	Jab_wav []byte
 
 	//go:embed jab8.wav
