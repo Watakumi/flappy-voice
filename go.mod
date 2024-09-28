@@ -2,7 +2,10 @@ module flappy-voice
 
 go 1.23.1
 
-require github.com/hajimehoshi/ebiten/v2 v2.8.0
+require (
+	github.com/gordonklaus/portaudio v0.0.0-20230709114228-aafa478834f5
+	github.com/hajimehoshi/ebiten/v2 v2.8.0
+)
 
 require (
 	github.com/ebitengine/gomobile v0.0.0-20240911145611-4856209ac325 // indirect
