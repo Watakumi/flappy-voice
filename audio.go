@@ -9,7 +9,7 @@ import (
 
 const sampleRate = 44100
 const framesPerBuffer = 256
-const threshold = 0.1 // 音量のしきい値
+const threshold = 0.15 // 音量のしきい値
 
 func doAudioLoop() chan struct{} {
 	evChan := make(chan struct{}, 10)

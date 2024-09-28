@@ -176,6 +176,12 @@ func (g *Game) init() {
 }
 
 func (g *Game) isKeyJustPressed() bool {
+	select {
+	case <-g.micChan:
+		return true
+	default:
+	}
+
 	if inpututil.IsKeyJustPressed(ebiten.KeySpace) {
 		return true
 	}
