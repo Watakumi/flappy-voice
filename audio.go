@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"math"
 
@@ -12,12 +11,20 @@ const sampleRate = 44100
 const framesPerBuffer = 256
 const threshold = 0.1 // 音量のしきい値
 
-func main() {
+func doAudioLoop() chan struct{} {
+	evChan := make(chan struct{}, 10)
+	go func() {
+		audioLoop(evChan)
+		close(evChan)
+	}()
+	return evChan
+}
+
+func audioLoop(evChan chan struct{}) {
 	// PortAudioを初期化
 	portaudio.Initialize()
 	defer portaudio.Terminate()
 
-	// マイク入力用のストリームを作成
 	in := make([]float32, framesPerBuffer)
 	stream, err := portaudio.OpenDefaultStream(1, 0, sampleRate, len(in), in)
 	if err != nil {
@@ -32,8 +39,6 @@ func main() {
 	}
 	defer stream.Stop()
 
-	fmt.Println("Listening for sound...")
-
 	for {
 		// 音声データを取得
 		err := stream.Read()
@@ -44,10 +49,11 @@ func main() {
 		// 音量を計算してしきい値を超えているか判定
 		volume := calculateVolume(in)
 		if volume > threshold {
-			fmt.Printf("Sound detected! Volume: %f\n", volume)
+			go func() {
+				evChan <- struct{}{}
+			}()
+			// fmt.Printf("Sound detected! Volume: %f\n", volume)
 		}
-
-		// time.Sleep(100 * time.Millisecond) // 100ms間隔でチェック
 	}
 }
 
