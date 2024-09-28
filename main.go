@@ -127,6 +127,8 @@ type Game struct {
 	audioContext *audio.Context
 	jumpPlayer   *audio.Player
 	hitPlayer    *audio.Player
+
+	micChan chan struct{}
 }
 
 func NewGame(crt bool) ebiten.Game {
@@ -169,9 +171,17 @@ func (g *Game) init() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	g.micChan = doAudioLoop()
 }
 
 func (g *Game) isKeyJustPressed() bool {
+	select {
+	case <-g.micChan:
+		return true
+	default:
+	}
+
 	if inpututil.IsKeyJustPressed(ebiten.KeySpace) {
 		return true
 	}
