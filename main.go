@@ -96,12 +96,20 @@ func init() {
 }
 
 type Mode int
+type Difficulty int
 
 const (
 	ModeTitle Mode = iota
 	ModeGame
 	ModeGameOver
-	SelectMode
+)
+
+const (
+	NotSelected Difficulty = iota
+	Easy
+	Normal
+	Hard
+	End
 )
 
 type Game struct {
@@ -120,6 +128,8 @@ type Game struct {
 	pipeTileYs []int
 
 	gameoverCount int
+
+	selectedDifficulty Difficulty
 
 	touchIDs   []ebiten.TouchID
 	gamepadIDs []ebiten.GamepadID
@@ -214,6 +224,13 @@ func (g *Game) isKeyJustPressed() bool {
 	return false
 }
 
+func (g *Game) isSelectedKeyPressed() Difficulty {
+	if inpututil.IsKeyJustPressed(ebiten.KeyDigit0) {
+		return Easy
+	}
+	return NotSelected
+}
+
 func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
 	return screenWidth, screenHeight
 }
@@ -221,7 +238,10 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
 func (g *Game) Update() error {
 	switch g.mode {
 	case ModeTitle:
-		if g.isKeyJustPressed() {
+		if g.isSelectedKeyPressed() == NotSelected {
+			return nil
+		} else {
+			g.selectedDifficulty = g.isSelectedKeyPressed()
 			g.mode = ModeGame
 		}
 	case ModeGame:
@@ -237,9 +257,16 @@ func (g *Game) Update() error {
 		g.y16 += g.vy16
 
 		// Gravity
-		g.vy16 += 4
-		if g.vy16 > 96 {
-			g.vy16 = 96
+		if g.selectedDifficulty == Easy {
+			g.vy16 += 1
+			if g.vy16 > 96 {
+				g.vy16 = 96
+			}
+		} else {
+			g.vy16 += 4
+			if g.vy16 > 96 {
+				g.vy16 = 96
+			}
 		}
 
 		if g.hit() {
@@ -274,7 +301,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	switch g.mode {
 	case ModeTitle:
 		titleTexts = "FLAPPY VOICE(仮)"
-		texts = "\n\n\n\n\n\nPRESS SPACE KEY\n\nOR A/B BUTTON\n\nOR TOUCH SCREEN"
+		texts = "\n\n\n\n\n\nPRESS SPACE KEY\n\nOR TOUCH SCREEN"
 	case ModeGameOver:
 		texts = "\nGAME OVER!"
 	}
