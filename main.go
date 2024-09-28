@@ -69,17 +69,17 @@ const (
 )
 
 var (
-	gopherImage      *ebiten.Image
+	endImage         *ebiten.Image
 	tilesImage       *ebiten.Image
 	arcadeFaceSource *text.GoTextFaceSource
 )
 
 func init() {
-	img, _, err := image.Decode(bytes.NewReader(resources.Gopher_png))
+	img, _, err := image.Decode(bytes.NewReader(resources.End_png))
 	if err != nil {
 		log.Fatal(err)
 	}
-	gopherImage = ebiten.NewImageFromImage(img)
+	endImage = ebiten.NewImageFromImage(img)
 
 	img, _, err = image.Decode(bytes.NewReader(resources.Tiles_png))
 	if err != nil {
@@ -107,7 +107,7 @@ const (
 type Game struct {
 	mode Mode
 
-	// The gopher's position
+	// The end's position
 	x16  int
 	y16  int
 	vy16 int
@@ -266,7 +266,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	screen.Fill(color.RGBA{0x80, 0xa0, 0xc0, 0xff})
 	g.drawTiles(screen)
 	if g.mode != ModeTitle {
-		g.drawGopher(screen)
+		g.drawEnd(screen)
 	}
 
 	var titleTexts string
@@ -300,7 +300,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	}, op)
 
 	if g.mode == ModeTitle {
-		const msg = "Go Gopher by Renee French is\nlicenced under CC BY 3.0."
+		const msg = "Go End by Renee French is\nlicenced under CC BY 3.0."
 
 		op := &text.DrawOptions{}
 		op.GeoM.Translate(screenWidth/2, screenHeight-smallFontSize/2)
@@ -351,14 +351,14 @@ func (g *Game) hit() bool {
 		return false
 	}
 	const (
-		gopherWidth  = 30
-		gopherHeight = 60
+		endWidth  = 30
+		endHeight = 60
 	)
-	w, h := gopherImage.Bounds().Dx(), gopherImage.Bounds().Dy()
-	x0 := floorDiv(g.x16, 16) + (w-gopherWidth)/2
-	y0 := floorDiv(g.y16, 16) + (h-gopherHeight)/2
-	x1 := x0 + gopherWidth
-	y1 := y0 + gopherHeight
+	w, h := endImage.Bounds().Dx(), endImage.Bounds().Dy()
+	x0 := floorDiv(g.x16, 16) + (w-endWidth)/2
+	y0 := floorDiv(g.y16, 16) + (h-endHeight)/2
+	x1 := x0 + endWidth
+	y1 := y0 + endHeight
 	if y0 < -tileSize*4 {
 		return true
 	}
@@ -366,7 +366,7 @@ func (g *Game) hit() bool {
 		return true
 	}
 	xMin := floorDiv(x0-pipeWidth, tileSize)
-	xMax := floorDiv(x0+gopherWidth, tileSize)
+	xMax := floorDiv(x0+endWidth, tileSize)
 	for x := xMin; x <= xMax; x++ {
 		y, ok := g.pipeAt(x)
 		if !ok {
@@ -436,15 +436,15 @@ func (g *Game) drawTiles(screen *ebiten.Image) {
 	}
 }
 
-func (g *Game) drawGopher(screen *ebiten.Image) {
+func (g *Game) drawEnd(screen *ebiten.Image) {
 	op := &ebiten.DrawImageOptions{}
-	w, h := gopherImage.Bounds().Dx(), gopherImage.Bounds().Dy()
+	w, h := endImage.Bounds().Dx(), endImage.Bounds().Dy()
 	op.GeoM.Translate(-float64(w)/2.0, -float64(h)/2.0)
 	op.GeoM.Rotate(float64(g.vy16) / 96.0 * math.Pi / 6)
 	op.GeoM.Translate(float64(w)/2.0, float64(h)/2.0)
 	op.GeoM.Translate(float64(g.x16/16.0)-float64(g.cameraX), float64(g.y16/16.0)-float64(g.cameraY))
 	op.Filter = ebiten.FilterLinear
-	screen.DrawImage(gopherImage, op)
+	screen.DrawImage(endImage, op)
 }
 
 type GameWithCRTEffect struct {

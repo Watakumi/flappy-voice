@@ -19,8 +19,8 @@ import (
 )
 
 var (
-	//go:embed gopher.png
-	Gopher_png []byte
+	//go:embed end.png
+	End_png []byte
 
 	//go:embed tiles.png
 	Tiles_png []byte
