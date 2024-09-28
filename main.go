@@ -26,13 +26,12 @@ import (
 	"math"
 	"math/rand/v2"
 
-	resources "github.com/Watakumi/flappy-voice/resources"
+	raudio "github.com/Watakumi/flappy-voice/resources/audio"
+	resources "github.com/Watakumi/flappy-voice/resources/images"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/audio"
-	"github.com/hajimehoshi/ebiten/v2/audio/vorbis"
 	"github.com/hajimehoshi/ebiten/v2/audio/wav"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
-	raudio "github.com/hajimehoshi/ebiten/v2/examples/resources/audio"
 	"github.com/hajimehoshi/ebiten/v2/examples/resources/fonts"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	"github.com/hajimehoshi/ebiten/v2/text/v2"
@@ -102,6 +101,7 @@ const (
 	ModeTitle Mode = iota
 	ModeGame
 	ModeGameOver
+	SelectMode
 )
 
 type Game struct {
@@ -154,7 +154,7 @@ func (g *Game) init() {
 		g.audioContext = audio.NewContext(48000)
 	}
 
-	jumpD, err := vorbis.DecodeF32(bytes.NewReader(raudio.Jump_ogg))
+	jumpD, err := wav.DecodeF32(bytes.NewReader(raudio.Jump_ogg))
 	if err != nil {
 		log.Fatal(err)
 	}
