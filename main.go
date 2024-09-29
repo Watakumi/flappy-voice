@@ -263,14 +263,14 @@ func (g *Game) Update() error {
 		g.y16 += g.vy16
 
 		// Gravity
-    switch g.selectedDifficulty {
+		switch g.selectedDifficulty {
 		case Easy:
-			g.vy16 += 8
-		case Normal:
 			g.vy16 += 4
+		case Normal:
+			g.vy16 += 8
 		case Hard:
 			g.vy16 += 20
-    default:
+		default:
 			g.vy16 += 4
 		}
 
@@ -319,6 +319,8 @@ SELECT MODE
 0 = EASY
 1 = NORMAL
 2 = HARD
+
+PRESS ON SHIFT OR SHOUT!
 `
 
 	case ModeGameOver:
