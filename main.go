@@ -25,6 +25,8 @@ import (
 	"log"
 	"math"
 	"math/rand/v2"
+	"sync"
+	"time"
 
 	raudio "github.com/Watakumi/flappy-voice/resources/audio"
 	resources "github.com/Watakumi/flappy-voice/resources/images"
@@ -138,7 +140,9 @@ type Game struct {
 	jumpPlayer   *audio.Player
 	hitPlayer    *audio.Player
 
-	micChan chan struct{}
+	micChan        chan struct{}
+	lastMicEventAt time.Time
+	micMu          sync.Mutex
 }
 
 func NewGame(crt bool) ebiten.Game {
@@ -185,21 +189,38 @@ func (g *Game) init() {
 	g.micChan = doAudioLoop()
 }
 
+func (g *Game) detectMicEvent() bool {
+	g.micMu.Lock()
+	defer g.micMu.Unlock()
+
+	now := time.Now()
+	if now.Sub(g.lastMicEventAt) > 500*time.Millisecond {
+		g.lastMicEventAt = now
+		return true
+	}
+	return false
+}
+
 func (g *Game) isKeyJustPressed() bool {
 	select {
 	case <-g.micChan:
-		return true
+		if g.detectMicEvent() {
+			return true
+		}
 	default:
 	}
 
 	if inpututil.IsKeyJustPressed(ebiten.KeySpace) {
+		g.lastMicEventAt = time.Now()
 		return true
 	}
 	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
+		g.lastMicEventAt = time.Now()
 		return true
 	}
 	g.touchIDs = inpututil.AppendJustPressedTouchIDs(g.touchIDs[:0])
 	if len(g.touchIDs) > 0 {
+		g.lastMicEventAt = time.Now()
 		return true
 	}
 	g.gamepadIDs = ebiten.AppendGamepadIDs(g.gamepadIDs[:0])
