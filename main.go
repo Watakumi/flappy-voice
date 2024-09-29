@@ -128,6 +128,7 @@ type Game struct {
 	pipeTileYs []int
 
 	gameoverCount int
+	jumpCount     int
 
 	selectedDifficulty Difficulty
 
@@ -156,6 +157,7 @@ func (g *Game) init() {
 	g.cameraX = -240
 	g.cameraY = 0
 	g.pipeTileYs = make([]int, 256)
+	g.jumpCount = 0
 	for i := range g.pipeTileYs {
 		g.pipeTileYs[i] = rand.IntN(6) + 2
 	}
@@ -186,6 +188,9 @@ func (g *Game) init() {
 }
 
 func (g *Game) isKeyJustPressed() bool {
+	if g.jumpCount > 0 {
+		return false
+	}
 	select {
 	case <-g.micChan:
 		return true
@@ -251,9 +256,18 @@ func (g *Game) Update() error {
 			g.mode = ModeGame
 		}
 	case ModeGame:
+		fmt.Printf("ModeGame")
 		g.x16 += 32
 		g.cameraX += 2
+		if g.jumpCount > 0 {
+			g.jumpCount--
+			fmt.Printf("jumpCount %d\n", g.jumpCount)
+			fmt.Printf("%#v\n", g.isKeyJustPressed())
+			return nil
+		}
+
 		if g.isKeyJustPressed() {
+			g.jumpCount = 60
 			g.vy16 = -96
 			if err := g.jumpPlayer.Rewind(); err != nil {
 				return err
