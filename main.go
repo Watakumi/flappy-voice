@@ -341,7 +341,7 @@ SELECT MODE
 1 = NORMAL
 2 = HARD
 
-PRESS ON SHIFT OR SHOUT!
+PRESS ON SPACE OR SHOUT!
 `
 
 	case ModeGameOver:
@@ -369,7 +369,7 @@ PRESS ON SHIFT OR SHOUT!
 	}, op)
 
 	if g.mode == ModeTitle {
-		const msg = "Go End by Renee French is\nlicenced under CC BY 3.0."
+		const msg = "Special Thanks: END(@aiandrox)"
 
 		op := &text.DrawOptions{}
 		op.GeoM.Translate(screenWidth/2, screenHeight-smallFontSize/2)
